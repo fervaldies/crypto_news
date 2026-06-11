@@ -72,7 +72,7 @@ def fetch_crypto_news():
         raise ValueError("GNEWS_API_KEY is not set")
 
     params = urllib.parse.urlencode({
-        "q":      "crypto OR bitcoin OR cryptocurrency",
+        "q":      "crypto OR bitcoin OR ethereum OR XRP OR solana OR stablecoin OR cryptocurrency OR blockchain",
         "lang":   "en",
         "max":    "10",
         "apikey": GNEWS_API_KEY
