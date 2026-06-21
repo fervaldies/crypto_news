@@ -74,7 +74,7 @@ def fetch_crypto_news():
     params = urllib.parse.urlencode({
         "q":      "crypto OR bitcoin OR ethereum OR XRP OR cryptocurrency OR blockchain OR altcoin",
         "lang":   "en",
-        "max":    "10",
+        "max":    "25",
         "apikey": GNEWS_API_KEY
     })
     url = f"https://gnews.io/api/v4/search?{params}"
@@ -111,25 +111,28 @@ def pick_best_5(headlines):
         "role": "user",
         "content": (
             "You are a crypto news editor. From the list below, pick the 5 most "
-            "important and interesting stories about cryptocurrency, Bitcoin, blockchain "
-            "or Web3. Prioritise variety of topics. "
+            "important and clear stories about cryptocurrency, Bitcoin, blockchain or Web3.\n\n"
+            "AVOID headlines that:\n"
+            "- Are vague or could apply to any day (e.g. 'Group tackles issues head-on')\n"
+            "- Mention no specific coin, company, person, or concrete event\n"
+            "- Are minor celebrity, opinion, or feature teasers rather than hard news\n\n"
+            "PREFER headlines that name a specific coin, project, company, person, "
+            "or concrete event (price moves, regulation, hacks, launches, ETFs). "
+            "Prioritise variety of topics.\n\n"
             "Return ONLY raw JSON, no markdown, no backticks:\n"
             '{"selected_indexes": [0, 1, 2, 3, 4]}\n\n'
             f"Indexes are 0-based. Stories:\n\n{numbered}"
         )
     }], max_tokens=100)
-
     text    = extract_json(text)
     indexes = json.loads(text)["selected_indexes"]
     selected = [headlines[i] for i in indexes if i < len(headlines)]
-
     if len(selected) < 5:
         for h in headlines:
             if h not in selected:
                 selected.append(h)
             if len(selected) == 5:
                 break
-
     return [{"title": t} for t in selected[:5]]
 
 
