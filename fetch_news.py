@@ -68,15 +68,18 @@ def github_models_call(messages, max_tokens=600):
         headers={"Content-Type": "application/json"}
     )
 
-    for attempt in range(3):
+    for attempt in range(4):
         try:
             with urllib.request.urlopen(req, timeout=30) as r:
                 result = json.loads(r.read().decode("utf-8"))
             return result["candidates"][0]["content"]["parts"][0]["text"]
         except urllib.error.HTTPError as e:
-            if e.code == 429 and attempt < 2:
+            error_body = e.read().decode("utf-8")
+            print(f"  ❌ Gemini API error {e.code}: {error_body}")
+            transient = e.code == 429 or 500 <= e.code < 600
+            if transient and attempt < 3:
                 wait = 5 * (attempt + 1)
-                print(f"  ⏳ Gemini rate limited, retrying in {wait}s...")
+                print(f"  ⏳ Transient error, retrying in {wait}s...")
                 time.sleep(wait)
             else:
                 raise
