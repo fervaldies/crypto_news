@@ -1,8 +1,8 @@
 name: Daily Crypto News
 
 on:
-  #schedule:
-  #  - cron: '0 4 * * *'  # 4:00 UTC — runs 4h before EN posting at 8:00 UTC
+  schedule:
+    - cron: '0 4 * * *'  # 4:00 UTC — runs 4h before EN posting at 8:00 UTC
   workflow_dispatch:
 
 jobs:
